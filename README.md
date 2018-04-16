@@ -1,6 +1,7 @@
 ## MySQL语句基本教学和实例
 
 这个项目主要是提供MySQL语句的实验教学，为了方便直接测试一些SQL语句，就需要提前创建一些表并且添加一些数据。
+将其存在 create_table.sql 和 insert.sql 两个文件中。
 
 
 ### 需要了解的MySQL的主要语句
@@ -10,7 +11,8 @@
 #### 基本语句
 
 1. 说明：创建数据库   
-    CREATE DATABASE database-name
+    CREATE DATABASE database-name   
+    USE database-name   
 2. 说明：删除数据库   
     drop database dbname
 3. 说明：备份sql server   
@@ -20,12 +22,19 @@
     --- 开始 备份   
     BACKUP DATABASE pubs TO testBack   
 4. 说明：创建新表   
-    create table tabname(col1 type1 [not null] [primary key],col2 type2 [not null],..)   
+    create table tabname(col1 type1 [not null] [auto_increment] [primary key],col2 type2 [not null],..) [ENGINE=InnoDB] [CHARSET=utf8]   
     根据已有的表创建新表：   
     A：create table tab_new like tab_old (使用旧表创建新表)   
     B：create table tab_new as select col1,col2… from tab_old definition only   
 5. 说明：删除新表   
     drop table tabname   
+6. 说明：添加外键约束：   
+    ALTER TABLE 表名 ADD FOREIGN KEY (字段名) REFERENCES 表名(字段名) ;   
+    ON DELETE, ON UPDATE 各选项属性说明：   
+    RESTRICT ：父表删除(更新) 且外键对应子表记录存在时，则不允许删除(更新)。   
+    CASCADE ：父表删除(更新)时，外键对应子表记录同时删除(更新)。   
+    SET NULL ：父表删除(更新)时，外键对应子表记录同时置为NULL.(必须允许为NULL）   
+    NO ACTION：父表删除(更新)且外键对应子表记录存在时，则不允许删除(更新)。   
 6. 说明：增加一个列   
     Alter table tabname add column col type   
     注：列增加后将不能删除。DB2中列加上后数据类型也不能改变，唯一能改变的是增加varchar类型的长度。   
@@ -155,6 +164,41 @@
 
 
 
-### 批量实例
+### linux命令行下导出导入.sql文件
+
+#### 导出数据库用mysqldump命令（注意mysql的安装路径，即此命令的路径）
+1、导出数据和表结构：   
+mysqldump -u用户名 -p密码 数据库名 > 数据库名.sql   
+``` bash
+/usr/local/mysql/bin/   mysqldump -uroot -p abc > abc.sql
+# 敲回车后会提示输入密码
+```
+
+2、只导出表结构   
+mysqldump -u用户名 -p密码 -d 数据库名 > 数据库名.sql
+
+``` bash
+#/usr/local/mysql/bin/   mysqldump -uroot -p -d abc > abc.sql
+```
+
+注：/usr/local/mysql/bin/  --->  mysql的data目录
+
+
+#### 导入数据库
+
+1、首先建空数据库   
+mysql>create database abc;
+
+2、导入数据库   
+1. 方法一：   
+（1）选择数据库   
+`mysql>use abc;`    
+（2）设置数据库编码    
+`mysql>set names utf8;`   
+（3）导入数据（注意sql文件的路径）   
+`mysql>source /home/abc/abc.sql;`   
+2. 方法二：
+mysql -u用户名 -p密码 数据库名 < 数据库名.sql
+`mysql -uabc_f -p abc < abc.sql`
 
 
